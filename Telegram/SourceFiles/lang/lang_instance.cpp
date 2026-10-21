@@ -7,6 +7,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "lang/lang_instance.h"
 
+#include <QtCore/QRegularExpression>
+
 #include "core/application.h"
 #include "storage/serialize_common.h"
 #include "storage/localstorage.h"
@@ -20,6 +22,21 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 namespace Lang {
 namespace {
+
+// FamilyGram: show our name instead of "Telegram" in every language pack.
+[[nodiscard]] QByteArray Rebrand(const QByteArray &value) {
+	if (!value.contains("Telegram")) {
+		return value;
+	}
+	static const auto expression = QRegularExpression(
+		QStringLiteral("(?<![\\w/.@#-])Telegram(?!\\w|\\.(?:org|me)\\b)"));
+	auto result = QString::fromUtf8(value);
+	result.replace(
+		QStringLiteral("\\nTelegram"),
+		QStringLiteral("\\nFamilyGram"));
+	result.replace(expression, QStringLiteral("FamilyGram"));
+	return result.toUtf8();
+}
 
 const auto kSerializeVersionTag = u"#new"_q;
 constexpr auto kSerializeVersion = 1;
@@ -730,7 +747,7 @@ QString Instance::getNonDefaultValue(const QByteArray &key) const {
 
 void Instance::applyValue(const QByteArray &key, const QByteArray &value) {
 	_nonDefaultValues[key] = value;
-	ParseKeyValue(key, value, [&](ushort key, QString &&value) {
+	ParseKeyValue(key, Rebrand(value), [&](ushort key, QString &&value) {
 		_nonDefaultSet[key] = 1;
 		if (!_derived) {
 			_values[key] = std::move(value);

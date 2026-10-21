@@ -6,6 +6,8 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "intro/intro_step.h"
+#include "ui/painter.h"
+#include "window/main_window.h"
 
 #include "intro/intro_widget.h"
 #include "intro/intro_signup.h"
@@ -483,7 +485,16 @@ void Step::paintCover(QPainter &p, int top) {
 		planeLeft += deltaLeft;
 	//	planeTop += top;
 	}
-	st::introCoverIcon.paint(p, planeLeft, planeTop, width());
+	{
+		auto hq = PainterHighQualityEnabler(p);
+		p.drawImage(
+			QRect(
+				planeLeft,
+				planeTop,
+				st::introCoverIcon.width(),
+				st::introCoverIcon.height()),
+			Window::LogoNoMargin());
+	}
 }
 
 int Step::contentLeft() const {

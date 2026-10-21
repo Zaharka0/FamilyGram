@@ -6,6 +6,7 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "intro/intro_qr.h"
+#include "window/main_window.h"
 
 #include "boxes/abstract_box.h"
 #include "data/components/passkeys.h"
@@ -575,7 +576,7 @@ QImage TelegramLogoImage() {
 		p.setBrush(QrActiveColor());
 		p.setPen(Qt::NoPen);
 		p.drawEllipse(QRect(QPoint(), size));
-		st::introQrPlane.paintInCenter(p, QRect(QPoint(), size));
+		p.drawImage(QRect(QPoint(), size), Window::LogoNoMargin());
 	}
 	return result;
 }

@@ -6,6 +6,7 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "boxes/connection_box.h"
+#include "window/main_window.h"
 
 #include "base/call_delayed.h"
 #include "base/qt/qt_key_modifiers.h"
@@ -207,7 +208,7 @@ struct TopButtonMenuState {
 		p.setBrush(ProxyQrActiveColor());
 		p.setPen(Qt::NoPen);
 		p.drawEllipse(QRect(QPoint(), size));
-		st::introQrPlane.paintInCenter(p, QRect(QPoint(), size));
+		p.drawImage(QRect(QPoint(), size), Window::LogoNoMargin());
 	}
 	return result;
 }
